@@ -1,4 +1,4 @@
-#+title My Emacs config
+#+TITLE My Emacs config
 #+PROPERTY: header-args:emacs-lisp :tangle ~/.emacs.d/init.el
 
 * Packages Setup

@@ -356,7 +356,7 @@
   ;;Basically this is for my emacs config with org
   (defun vt/org-babel-tangle-config ()
     (when (string-equal (buffer-file-name)
-                        (expand-file-name "~/Documentos/OrgFiles/Emacs/Emacs.org"))
+                        (expand-file-name "~/Documentos/OrgFiles/Emacs/My-Emacs-Config/Emacs.org"))
       ;; Dynamic scoping to the rescue
       (let ((org-confirm-babel-evaluate nil))
         (org-babel-tangle))))
@@ -394,29 +394,43 @@
 #+end_src
 ** C/C++
 #+begin_src emacs-lisp
-  (require 'eglot)
-  (add-to-list 'eglot-server-programs '((c++-mode c-mode) "clangd"))
-  (add-hook 'c-mode-hook 'eglot-ensure)
-  (add-hook 'c++-mode-hook 'eglot-ensure)
-  (add-hook 'c-mode-hook 'company-mode)
-  (add-hook 'c++-mode-hook 'company-mode)
-  (add-hook 'c-mode-hook 'smartparens-mode)
-  (add-hook 'c++-mode-hook 'smartparens-mode)
-  (add-hook 'c++-mode-hook 'yas-minor-mode)
-  (add-hook 'c++-mode-hook 'yas-minor-mode)
-
-  ;; (use-package ccls
-  ;;   :ensure t
-  ;;   :config
-  ;;   (setq ccls-executable "ccls")
-  ;;   (setq lsp-prefer-flymake nil)
-  ;;   ;;(setq diagnostic.enable false)
-  ;;   (setq lsp-diagnostics-provider :none)
-  ;;   ;;(setq disabled-checkers '(c/c++-clang c/c++-cppcheck c/c++-gcc))
-  ;;   :hook ((c-mode c++-mode objc-mode cuda-mode) .
-  ;;          (lambda () (require 'ccls) (lsp))))
-  (setq c-default-style "linux"
-        c-basic-offset 4)
+  (add-hook 'c-mode-hook 'lsp)
+  (add-hook 'c++-mode-hook 'lsp)
+  
+  (setq gc-cons-threshnold (* 100 1024 1024)
+        read-process-output-max (* 1024 1024)
+        treemacs-space-between-root-nodes nil
+        company-idle-delay 0.0
+        company-minimum-prefix-length 1
+        lsp-idle-delay 0.1)  ;; clangd is fast
+  
+  (with-eval-after-load 'lsp-mode
+    (add-hook 'lsp-mode-hook #'lsp-enable-which-key-integration)
+    (require 'dap-cpptools)
+    (yas-global-mode))
+    ;; (require 'eglot)
+      ;; (add-to-list 'eglot-server-programs '((c++-mode c-mode) "clangd"))
+      ;; (add-hook 'c-mode-hook 'eglot-ensure)
+      ;; (add-hook 'c++-mode-hook 'eglot-ensure)
+      ;; (add-hook 'c-mode-hook 'company-mode)
+      ;; (add-hook 'c++-mode-hook 'company-mode)
+      ;; (add-hook 'c-mode-hook 'smartparens-mode)
+      ;; (add-hook 'c++-mode-hook 'smartparens-mode)
+      ;; (add-hook 'c++-mode-hook 'yas-minor-mode)
+      ;; (add-hook 'c++-mode-hook 'yas-minor-mode)
+  
+      ;; ;; (use-package  ccls
+      ;;   :ensure t
+      ;;   :config
+      ;;   (setq ccls-executable "ccls")
+      ;;   (setq lsp-prefer-flymake nil)
+      ;;   ;;(setq diagnostic.enable false)
+      ;;   (setq lsp-diagnostics-provider :none)
+      ;;   ;;(setq disabled-checkers '(c/c++-clang c/c++-cppcheck c/c++-gcc))
+      ;;   :hook ((c-mode c++-mode objc-mode cuda-mode) .
+      ;;          (lambda () (require 'ccls) (lsp))))
+      (setq c-default-style "linux"
+            c-basic-offset 4)
 #+end_src
 ** Haskell
 #+begin_src emacs-lisp
@@ -479,6 +493,8 @@
 * DAP mode
 #+begin_src emacs-lisp
   (use-package dap-mode)
+  
+  (require 'dap-lldb)
 #+end_src
 * Terminal in emacs
 #+begin_src emacs-lisp
